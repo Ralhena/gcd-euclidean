@@ -82,9 +82,9 @@ button:hover { background: #0063d1; }
   white-space: pre-line;
   color: #222;
   box-shadow: 0 2px 6px rgba(0,0,0,0.04);
-  display: none; /* default disembunyikan, tampilkan saat klik proses */
-  font-size: 20px;   /* default 16px, bisa diperbesar */
-  line-height: 1.6;  /* biar lebih enak dibaca */
+  display: none;
+  font-size: 20px;
+  line-height: 1.6; 
 }
 
 .step-row {
@@ -101,10 +101,11 @@ button:hover { background: #0063d1; }
 .col-plus { width: 30px; text-align: center; } /* + */
 .col-r    { width: 70px; text-align: left;   } /* r (sisa) */
 
-/* responsive: kalau layar sempit, kurangi ukuran kolom */
+/* responsive: jika layar sempit, kurangi ukuran kolom */
 @media (max-width: 420px) {
   .col-a { width: 70px; }
   .col-q { width: 28px; }
   .col-b, .col-r { width: 50px; }
   .steps-box { font-size: 16px; }
+
 }
