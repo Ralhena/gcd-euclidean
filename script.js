@@ -1,9 +1,3 @@
-/* script.js
-   - Sesuai index.html & style.css di atas
-   - Enter di input -> showResult() (ringkas)
-   - Klik tombol -> lihatProses() (hasil + langkah)
-*/
-
 /** Hitung gcd dan langkah Euclid.
  * Mengembalikan object { gcd: number, steps: Array<{a,b,q,r}> }
  */
@@ -62,7 +56,7 @@ function showResultOnly() {
 }
 
 /**
- * Menampilkan hasil + semua langkah (versi dinamis)
+ * Menampilkan hasil + semua langkah
  */
 async function lihatProses() {
     const n1 = document.getElementById("num1").value;
@@ -84,7 +78,7 @@ async function lihatProses() {
     const stepsEl = document.getElementById("steps");
     stepsEl.style.display = "block"; // Tampilkan kotak langkah
 
-    // --- LANGKAH 1: BUAT DAN RENDER HTML DULU ---
+
     let html = `<div style="font-weight:700; margin-bottom:10px">Langkah-langkah:</div>`;
     steps.forEach((step, i) => {
         // Beri ID unik untuk setiap span yang akan kita ukur
@@ -99,10 +93,8 @@ async function lihatProses() {
     });
     stepsEl.innerHTML = html; // Set HTML agar browser menggambarnya
 
-    // Beri sedikit waktu agar browser selesai menggambar elemen di layar
     await new Promise(r => setTimeout(r, 0));
 
-    // --- LANGKAH 2: UKUR POSISI ELEMEN, LALU BUAT SVG ---
     let svgPaths = '';
     const containerRect = stepsEl.getBoundingClientRect(); // Posisi kotak kontainer
 
@@ -155,7 +147,6 @@ async function lihatProses() {
     stepsEl.innerHTML += svgFinal;
 }
 
-// Jangan lupa untuk mengikat fungsi ini ke tombol
 document.getElementById("btnProses").addEventListener("click", lihatProses);
 
 
@@ -173,3 +164,4 @@ document.getElementById("num1").addEventListener("keydown", function (ev) {
 document.getElementById("num2").addEventListener("keydown", function (ev) {
   if (ev.key === "Enter") { showResultOnly(); }
 });
+
