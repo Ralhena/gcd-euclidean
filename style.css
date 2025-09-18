@@ -1,9 +1,9 @@
 /* layout utama */
 body {
   font-family: Arial, sans-serif;
-  background: #f0f2f5;
+  background: #17002b;
   margin: 0;
-  padding: 0;
+  padding: 50px 0;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -11,23 +11,34 @@ body {
 }
 
 .container {
-  background: #fff;
-  padding: 22px 28px;
+  background: #1b0f47;
+  padding: 50px 50px;
   border-radius: 10px;
   box-shadow: 0 2px 12px rgba(0,0,0,0.08);
   text-align: center;
-  width: 420px;
+  width: 800px;
+  max-width: 95vw;
+  box-sizing: border-box;
 }
 
 /* judul & subtitle */
 h1 {
   margin: 0 0 6px 0;
-  font-size: 28px;
-  color: #222;
+  font-size: 50px;
+  color: #ffffff;
 }
 .subtitle {
   margin: 6px 0 14px 0;
-  color: #555;
+  color: #ffffff;
+}
+h2 {
+  margin: 0 0 14px 0;
+  font-size: 34px;
+  color: #ffffff;
+}
+.subtitle {
+  margin: 40px 0 14px 0;
+  color: #ffffff;
 }
 
 /* input */
@@ -47,23 +58,23 @@ input[type="number"] {
 
 /* tombol */
 button {
-  background: #007bff;
+  background: #520764;
   color: #fff;
   border: none;
   padding: 10px 18px;
   border-radius: 8px;
   cursor: pointer;
   font-size: 16px;
-  margin-top: 8px;
+  margin-top: 20px;
 }
-button:hover { background: #0063d1; }
+button:hover { background: #ffffff; color:#17002b; }
 
 /* hasil GCD (green check) */
 #result {
   margin-top: 14px;
-  font-size: 18px;
+  font-size: 24px;
   font-weight: 600;
-  color: #28a745; /* hijau */
+  color: #6cda9a; /* hijau */
   display: flex;
   align-items: center;
   justify-content: center;
@@ -74,17 +85,18 @@ button:hover { background: #0063d1; }
 .steps-box {
   position: relative;
   margin-top: 16px;
-  background: #fbfbfd;
-  padding: 14px;
+  background: #b6b6eb;
+  padding: 14px; 
   border-radius: 10px;
-  text-align: left;
-  font-family: "Courier New", monospace;
+  text-align: center;
+  font-family: "Arial", sans-serif;
   white-space: pre-line;
   color: #222;
   box-shadow: 0 2px 6px rgba(0,0,0,0.04);
-  display: none;
-  font-size: 20px;
-  line-height: 1.6; 
+  display: none; 
+  font-size: 20px;  
+  line-height: 1.6;  
+  overflow-x: auto;
 }
 
 .step-row {
@@ -92,20 +104,52 @@ button:hover { background: #0063d1; }
   align-items: center;
   gap: 6px;
 }
-/* setiap kolom diberi lebar tetap agar sejajar */
-.col-a    { width: 90px; text-align: right;  } /* a (di sebelah kiri) */
-.col-eq   { width: 30px; text-align: center; } /* = */
-.col-q    { width: 30px; text-align: right;  } /* q (hasil bagi) */
-.col-mul  { width: 30px; text-align: center; } /* × */
-.col-b    { width: 30px; text-align: left;   } /* b (pembagi) */
-.col-plus { width: 30px; text-align: center; } /* + */
-.col-r    { width: 70px; text-align: left;   } /* r (sisa) */
 
-/* responsive: jika layar sempit, kurangi ukuran kolom */
+
+/* setiap kolom diberi lebar tetap agar sejajar */
+.col-a    { min-width: 90px; text-align: right;  } /* a (di sebelah kiri) */
+.col-eq   { width: 30px; text-align: center; } /* = */
+.col-q    { min-width: 30px; text-align: right;  } /* q (hasil bagi) */
+.col-mul  { width: 30px; text-align: center; } /* × */
+.col-b    { min-width: 30px; text-align: left;   } /* b (pembagi) */
+.col-plus { width: 30px; text-align: center; } /* + */
+.col-r    { min-width: 70px; text-align: left;   } /* r (sisa) */
+
+/* responsive: kalau layar sempit, kurangi ukuran kolom */
 @media (max-width: 420px) {
   .col-a { width: 70px; }
   .col-q { width: 28px; }
   .col-b, .col-r { width: 50px; }
   .steps-box { font-size: 16px; }
+}
 
+#btnKombinasi {
+  background: #520764;
+  color: #fff;
+  border: none;
+  padding: 10px 18px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 16px;
+  margin-top: 20px;
+}
+#btnKombinasi:hover { background: #ffffff; color:#17002b;
+}
+
+#kombinasi-steps .step-title {
+  font-weight: 700;
+  margin-bottom: 12px;
+  text-align: center;
+}
+
+.input-wrapper {
+  flex: 1; /* Membuat setiap wrapper mengambil ruang yang sama */
+  text-align: left; /* Membuat label rata kiri */
+}
+
+.input-label {
+  display: block; /* Memastikan label berada di baris baru */
+  margin-top: 6px; /* Memberi jarak dari kotak input di atasnya */
+  font-size: 14px;
+  color: #e0e0e0; /* Sedikit lebih redup dari putih agar tidak terlalu mencolok */
 }
