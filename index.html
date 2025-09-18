@@ -8,12 +8,19 @@
 </head>
 <body>
   <div class="container">
-    <h1>Kalkulator GCD (Algoritma Euclid)</h1>
+    <h1>Kalkulator GCD</h1>
+      <h2> Algoritma Euclid</h2>
+      <p class="subtitle">140110220014</p>
     <p class="subtitle">Masukkan dua bilangan bulat:</p>
-
     <div class="input-group">
-      <input type="number" id="num1" placeholder="80" />
-      <input type="number" id="num2" placeholder="12" />
+      <div class="input-wrapper">
+        <input type="number" id="num1" placeholder="312" />
+        <label for="num1" class="input-label">Bilangan Pertama</label>
+      </div>
+      <div class="input-wrapper">
+        <input type="number" id="num2" placeholder="70" />
+        <label for="num2" class="input-label">Bilangan Kedua</label>
+      </div>
     </div>
 
     <button id="btnProses">Lihat Proses</button>
@@ -21,6 +28,11 @@
     <div id="result" aria-live="polite"></div>
 
     <div id="steps" class="steps-box" aria-live="polite"></div>
+
+      <button id="btnKombinasi" style="display: none;">Tampilkan Kombinasi Linear</button>
+      <div id="kombinasi-steps" class="steps-box" style="display: none; text-align: left;"></div>
+    </div>
+
   </div>
 
   <script src="script.js"></script>
