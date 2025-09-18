@@ -1,3 +1,15 @@
+
+/**
+ * Variabel untuk menyimpan state kalkulator,
+ * agar bisa diakses oleh berbagai fungsi.
+ */
+let calculatorState = {
+  a: 0,
+  b: 0,
+  gcd: 0,
+  steps: [],
+};
+
 /** Hitung gcd dan langkah Euclid.
  * Mengembalikan object { gcd: number, steps: Array<{a,b,q,r}> }
  */
@@ -43,6 +55,15 @@ function showResultOnly() {
     return;
   }
 
+  if (a < b) {
+    alert("Bilangan pertama harus lebih besar atau sama dengan bilangan kedua!");
+    // Kosongkan hasil sebelumnya jika ada
+    document.getElementById("result").innerHTML = "";
+    document.getElementById("steps").style.display = "none";
+    document.getElementById("steps").innerHTML = "";
+    return;
+  }
+
   const { gcd } = euclideanSteps(a, b);
   // ikon centang kecil (SVG inline)
   const checkSVG = `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -53,6 +74,9 @@ function showResultOnly() {
   // sembunyikan langkah saat hanya menampilkan hasil ringkas
   document.getElementById("steps").style.display = "none";
   document.getElementById("steps").innerText = "";
+
+  document.getElementById("btnKombinasi").style.display = "none";
+  document.getElementById("kombinasi-steps").style.display = "none";
 }
 
 /**
@@ -69,7 +93,19 @@ async function lihatProses() {
         return;
     }
 
+    if (a < b) {
+      alert("Bilangan pertama harus lebih besar atau sama dengan bilangan kedua!");
+      // Kosongkan hasil sebelumnya jika ada
+      document.getElementById("result").innerHTML = "";
+      document.getElementById("steps").style.display = "none";
+      document.getElementById("steps").innerHTML = "";
+      return;
+    }
+
     const { gcd, steps } = euclideanSteps(a, b);
+
+  // Simpan hasil ke state global
+    calculatorState = { a: Math.abs(n1), b: Math.abs(n2), gcd, steps };
 
     // Tampilkan hasil ringkas
     const checkSVG = `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M20 6L9 17L4 12" stroke="#28a745" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
@@ -77,7 +113,6 @@ async function lihatProses() {
 
     const stepsEl = document.getElementById("steps");
     stepsEl.style.display = "block"; // Tampilkan kotak langkah
-
 
     let html = `<div style="font-weight:700; margin-bottom:10px">Langkah-langkah:</div>`;
     steps.forEach((step, i) => {
@@ -91,8 +126,17 @@ async function lihatProses() {
           </div>
         `;
     });
-    stepsEl.innerHTML = html; // Set HTML agar browser menggambarnya
+    stepsEl.innerHTML = html;
 
+    // Sembunyikan dulu hasil kombinasi linear & tampilkan tombolnya
+    document.getElementById("kombinasi-steps").style.display = "none";
+    if (steps.length > 0) { // Hanya tampilkan tombol jika ada proses yg bisa di-reverse
+       document.getElementById("btnKombinasi").style.display = "inline-block";
+    } else {
+       document.getElementById("btnKombinasi").style.display = "none";
+    }
+
+    stepsEl.innerHTML = `<div class="steps-content-wrapper">${html}</div>`;
     await new Promise(r => setTimeout(r, 0));
 
     let svgPaths = '';
@@ -125,10 +169,10 @@ async function lihatProses() {
         const midY_2 = startY + 25; // Ketinggian belok panah kedua
 
         // Buat path panah b -> a
-        svgPaths += `<path d="M${b_current_midX},${startY} V${midY_1} H${a_next_midX} V${endY}" stroke="#888" stroke-width="1.5" fill="none" marker-end="url(#arrow)" />`;
+        svgPaths += `<path d="M${b_current_midX},${startY} V${midY_1} H${a_next_midX} V${endY}" stroke="#000000ff" stroke-width="1.5" fill="none" marker-end="url(#arrow)" />`;
 
         // Buat path panah r -> b
-        svgPaths += `<path d="M${r_current_midX},${startY} V${midY_2} H${b_next_midX} V${endY}" stroke="#888" stroke-width="1.5" fill="none" marker-end="url(#arrow)" />`;
+        svgPaths += `<path d="M${r_current_midX},${startY} V${midY_2} H${b_next_midX} V${endY}" stroke="#000000ff" stroke-width="1.5" fill="none" marker-end="url(#arrow)" />`;
     }
 
     // Buat elemen SVG dan gabungkan dengan path yang sudah dihitung
@@ -136,7 +180,7 @@ async function lihatProses() {
       <svg width="100%" height="100%" style="position: absolute; top: 0; left: 0; pointer-events: none;">
         <defs>
           <marker id="arrow" viewBox="0 0 10 10" refX="5" refY="10" markerWidth="6" markerHeight="6" orient="0">
-            <path d="M 0 0 L 5 10 L 10 0 z" fill="#888"></path>
+            <path d="M 0 0 L 5 10 L 10 0 z" fill="#000000ff"></path>
           </marker>
         </defs>
         ${svgPaths}
@@ -149,6 +193,122 @@ async function lihatProses() {
 
 document.getElementById("btnProses").addEventListener("click", lihatProses);
 
+/**
+ * =======================================================
+ * FUNGSI BARU: Logika untuk Kombinasi Linear
+ * =======================================================
+ */
+function tampilkanKombinasiLinear() {
+    const { a: originalA, b: originalB, gcd, steps } = calculatorState;
+
+    if (steps.length === 0 || steps[steps.length - 1].r !== 0) {
+        document.getElementById("kombinasi-steps").style.display = "none";
+        return;
+    }
+
+    const kombStepsEl = document.getElementById("kombinasi-steps");
+    kombStepsEl.style.display = "block";
+    let html = `<div class="step-title">Proses Substitusi Balik:</div>`;
+
+    // 1. Siapkan persamaan dalam bentuk numerik
+    const equations = steps.slice(0, -1).map(step => ({
+        r: step.r, a: step.a, b: step.b, q: step.q,
+        text: `${step.r} = ${step.a} - ${step.q} × ${step.b}`
+    }));
+
+    html += `<p style="margin-bottom: 12px;">Pertama, susun ulang setiap baris menjadi bentuk <strong>sisa = ...</strong></p>`;
+    equations.forEach(eq => {
+        html += `<p style="font-family: monospace; color: #000000ff;">${eq.text}</p>`;
+    });
+    html += `<hr style="margin: 15px 0;">`;
+
+    // Helper function baru untuk memformat dari array yang terurut
+    const formatFromTerms = (termsArray, result = gcd) => {
+        const termStrings = termsArray.map(term => `(${term.coeff}) × ${term.num}`);
+        return `${result} = ${termStrings.join(' + ').replace(/\+ \(-/g, '- (')}`;
+    };
+
+    if (equations.length === 0) return;
+
+    // 2. Mulai proses dari persamaan terakhir
+    const lastEq = equations[equations.length - 1];
+    
+    // Objek untuk perhitungan numerik
+    let coeffs = {};
+    coeffs[lastEq.a] = 1;
+    coeffs[lastEq.b] = -lastEq.q;
+    
+    // Array untuk menjaga urutan tampilan
+    let orderedTerms = [
+        { coeff: 1, num: lastEq.a },
+        { coeff: -lastEq.q, num: lastEq.b }
+    ];
+    
+    html += `<p>Mulai dari baris terakhir:</p>`;
+    html += `<p style="font-weight: bold;">${formatFromTerms(orderedTerms)}</p>`;
+
+    // 3. Loop mundur untuk substitusi
+    for (let i = equations.length - 2; i >= 0; i--) {
+        const eqToSub = equations[i];
+        const numToReplace = eqToSub.r;
+
+        if (!coeffs[numToReplace]) continue;
+
+        html += `<p style="margin-top:15px;">Kemudian, substitusikan <span style="font-family: monospace; color: #d63384;">${eqToSub.text}</span>:</p>`;
+        
+        const multiplier = coeffs[numToReplace];
+
+        // TAHAP 1: Tampilkan substitusi, jaga urutan
+        let subDisplayString = orderedTerms.map(term => {
+            if (term.num === numToReplace) {
+                return `(${multiplier}) × (${eqToSub.a} - ${eqToSub.q} × ${eqToSub.b})`;
+            }
+            return `(${term.coeff}) × ${term.num}`;
+        }).join(' + ').replace(/\+ \(-/g, '- (');
+        html += `<p>${gcd} = ${subDisplayString}</p>`;
+
+        // TAHAP 2: Tampilkan ekspansi, ganti suku di posisinya
+        let expandedTerms = [];
+        orderedTerms.forEach(term => {
+            if (term.num === numToReplace) {
+                expandedTerms.push({ coeff: multiplier * 1, num: eqToSub.a });
+                expandedTerms.push({ coeff: multiplier * (-eqToSub.q), num: eqToSub.b });
+            } else {
+                expandedTerms.push(term);
+            }
+        });
+        html += `<p>${formatFromTerms(expandedTerms)}</p>`;
+
+        // Lakukan pembaruan numerik di 'coeffs'
+        delete coeffs[numToReplace];
+        coeffs[eqToSub.a] = (coeffs[eqToSub.a] || 0) + (multiplier * 1);
+        coeffs[eqToSub.b] = (coeffs[eqToSub.b] || 0) + (multiplier * -eqToSub.q);
+
+        // TAHAP 3: Tampilkan penyederhanaan, bangun ulang urutan dari ekspansi
+        let simplifiedTerms = [];
+        let seenNums = new Set();
+        expandedTerms.forEach(term => {
+            if (!seenNums.has(term.num)) {
+                if(coeffs[term.num]) { // Hanya tambahkan jika koefisiennya tidak nol
+                    simplifiedTerms.push({ coeff: coeffs[term.num], num: term.num });
+                }
+                seenNums.add(term.num);
+            }
+        });
+        orderedTerms = simplifiedTerms; // Perbarui urutan untuk iterasi berikutnya
+
+        html += `<p style="font-weight: bold;">${formatFromTerms(orderedTerms)}</p>`;
+    }
+
+    // 4. Tampilkan hasil akhir
+    const x = coeffs[originalA] || 0;
+    const y = coeffs[originalB] || 0;
+
+    html += `<hr style="margin: 15px 0;">`;
+    html += `<p>Jadi, hasil akhirnya adalah:</p><p><strong>(${x}) × ${originalA} + (${y}) × ${originalB} = ${gcd}</strong></p>`;
+
+    kombStepsEl.innerHTML = html;
+}
 
 /* -------------------------
    Event binding
@@ -157,6 +317,9 @@ document.getElementById("btnProses").addEventListener("click", lihatProses);
 // Tombol "Lihat Proses"
 document.getElementById("btnProses").addEventListener("click", lihatProses);
 
+// Tombol kombinasi linear
+document.getElementById("btnKombinasi").addEventListener("click", tampilkanKombinasiLinear);
+
 // Tombol Enter di input -> tampilkan ringkasan hasil (tanpa langkah)
 document.getElementById("num1").addEventListener("keydown", function (ev) {
   if (ev.key === "Enter") { showResultOnly(); }
@@ -164,4 +327,3 @@ document.getElementById("num1").addEventListener("keydown", function (ev) {
 document.getElementById("num2").addEventListener("keydown", function (ev) {
   if (ev.key === "Enter") { showResultOnly(); }
 });
-
