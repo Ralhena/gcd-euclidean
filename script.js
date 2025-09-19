@@ -208,7 +208,7 @@ function tampilkanKombinasiLinear() {
 
     const kombStepsEl = document.getElementById("kombinasi-steps");
     kombStepsEl.style.display = "block";
-    let html = `<div class="step-title">Proses Substitusi Balik:</div>`;
+    let html = `<div class="step-title">Menyusun Kombinasi Linear:</div>`;
 
     // 1. Siapkan persamaan dalam bentuk numerik
     const equations = steps.slice(0, -1).map(step => ({
@@ -254,7 +254,7 @@ function tampilkanKombinasiLinear() {
 
         if (!coeffs[numToReplace]) continue;
 
-        html += `<p style="margin-top:15px;">Kemudian, substitusikan <span style="font-family: monospace; color: #d63384;">${eqToSub.text}</span>:</p>`;
+        html += `<p style="margin-top:15px;">Kemudian, substitusikan <span style="font-family: monospace; color: #8b148bff;">${eqToSub.text}</span>:</p>`;
         
         const multiplier = coeffs[numToReplace];
 
@@ -327,3 +327,4 @@ document.getElementById("num1").addEventListener("keydown", function (ev) {
 document.getElementById("num2").addEventListener("keydown", function (ev) {
   if (ev.key === "Enter") { showResultOnly(); }
 });
+
